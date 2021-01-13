@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" rowHeight="106" id="9W7-sq-d4E" customClass="SideMenuCell" customModule="MidAirPonyFair_iOS_app" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="431" height="106"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="9W7-sq-d4E" id="BJx-xo-TmW">
+                <rect key="frame" x="0.0" y="0.0" width="431" height="106"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="Cde-B0-IgI">
+                        <rect key="frame" x="24" y="0.0" width="383" height="106"/>
+                        <fontDescription key="fontDescription" name="Futura-Medium" family="Futura" pointSize="26"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="Cde-B0-IgI" firstAttribute="leading" secondItem="BJx-xo-TmW" secondAttribute="leading" constant="24" id="9C2-Te-5cv"/>
+                    <constraint firstItem="Cde-B0-IgI" firstAttribute="top" secondItem="BJx-xo-TmW" secondAttribute="top" id="k5f-0k-bBS"/>
+                    <constraint firstAttribute="trailing" secondItem="Cde-B0-IgI" secondAttribute="trailing" constant="24" id="uMF-aI-p6K"/>
+                    <constraint firstAttribute="bottom" secondItem="Cde-B0-IgI" secondAttribute="bottom" id="x60-Of-HEE"/>
+                </constraints>
+            </tableViewCellContentView>
+            <connections>
+                <outlet property="titleLabel" destination="Cde-B0-IgI" id="6o9-Wl-PyB"/>
+            </connections>
+            <point key="canvasLocation" x="-121.0144927536232" y="82.366071428571431"/>
+        </tableViewCell>
+    </objects>
+</document>

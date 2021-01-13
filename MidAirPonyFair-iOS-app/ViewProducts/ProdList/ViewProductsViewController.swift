@@ -31,6 +31,7 @@ class ViewProductsViewController: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let destinationVC = segue.destination as? CreateProductViewController else {return}
         destinationVC.productID = productID
+        productID = ""
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -48,6 +49,7 @@ class ViewProductsViewController: UIViewController {
         
         ref.child(dbProducts).observe(.value, with: {(snapshot) in
             self.products = []
+            self.productIDs = []
             guard let allProducts = snapshot.value as? [String: Any?] else { return }
             
             for (key, value) in allProducts {
@@ -78,12 +80,12 @@ extension ViewProductsViewController: UITableViewDelegate, UITableViewDataSource
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cellIdentifier = String(describing: MenuCell.self)
+        let cellIdentifier = String(describing: ProductCell.self)
         
         let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath)
         
-        if let myCell = cell as? MenuCell{
-            myCell.menuItemLabel.text =  products[indexPath.row]
+        if let myCell = cell as? ProductCell{
+            myCell.prodItemLabel.text =  products[indexPath.row]
         }
         
         return cell

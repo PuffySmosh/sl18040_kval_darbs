@@ -32,13 +32,18 @@ struct ShopDC {
         self.galleryLink = galleryLink
     }
     
-    func validate () -> Bool {
+    func validateFields () -> Bool {
+        let isDesc500 = vendorDesc.count <= 500
+        
+        return !username.isEmpty && !vendorDesc.isEmpty && !socialLink1.isEmpty && !storeLink.isEmpty && isDesc500
+    }
+    
+    func validatePrice () -> Bool {
         let isMinIntOk = minPrice > 0
         let isMaxIntOk = maxPrice > 0
         let isMinOk = minPrice <= maxPrice
-        let isDesc500 = vendorDesc.count <= 500
         
-        return !username.isEmpty && !vendorDesc.isEmpty && !socialLink1.isEmpty && !storeLink.isEmpty && isMinOk && isDesc500 && isMinIntOk && isMaxIntOk
+        return isMinIntOk && isMaxIntOk && isMinOk
     }
     
     func passData() -> [String: Any?] {

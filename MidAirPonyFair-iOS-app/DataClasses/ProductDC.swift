@@ -28,10 +28,14 @@ struct ProductDC {
         self.shopOwnerUID = shopOwnerUID
     }
     
-    func validate() -> Bool {
+    func validateFields() -> Bool {
+        return !prodName.isEmpty && !prodDesc.isEmpty && !prodLink.isEmpty && !shopOwnerUID.isEmpty
+    }
+    
+    func validatePrice () -> Bool {
         let isPriceOk = basePrice > 0
         
-        return !prodName.isEmpty && !prodDesc.isEmpty && !prodLink.isEmpty && isPriceOk && !shopOwnerUID.isEmpty
+        return isPriceOk
     }
     
     func passData() -> [String: Any] {

@@ -1,5 +1,5 @@
 //
-//  ViewVendorVC.swift
+//  ViewVendorViewController.swift
 //  MidAirPonyFair-iOS-app
 //
 //  Created by Irita Grigaluna on 11/01/2021.
@@ -10,14 +10,14 @@ import Firebase
 
 struct VendorInfo {
     var owner: ShopDC?
-    var produce: [ProductDC]
+    var product: [ProductDC]
 }
 
-class ViewVendorVC: UIViewController {
+class ViewVendorViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     
     var vendorID = ""
-    var ds = VendorInfo(owner: nil, produce: [ProductDC]())
+    var ds = VendorInfo(owner: nil, product: [ProductDC]())
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,7 +30,7 @@ class ViewVendorVC: UIViewController {
     func getData() {
         let ref = Database.database().reference()
         let shopsRef = ref.child("Shops").child(vendorID)
-        let produceRef = ref.child("Products")
+        let productRef = ref.child("Products")
         
         shopsRef.observeSingleEvent(of: .value, with: { [weak self] (snapshot) in
 
@@ -63,7 +63,7 @@ class ViewVendorVC: UIViewController {
             
             self?.ds.owner = vendor
             
-            produceRef.observeSingleEvent(of: .value, with: { (snapshot) in
+            productRef.observeSingleEvent(of: .value, with: { (snapshot) in
                 guard let value = snapshot.value as? [String: Any] else { return }
                 for (key, products) in value {
                     guard let product = products as? [String: Any],
@@ -90,7 +90,7 @@ class ViewVendorVC: UIViewController {
                         basePrice: price,
                         shopOwnerUID: key)
                     
-                    self?.ds.produce.append(prod)
+                    self?.ds.product.append(prod)
                 }
                 self?.tableView.reloadData()
             })
@@ -99,13 +99,13 @@ class ViewVendorVC: UIViewController {
     }
 }
 
-extension ViewVendorVC: UITableViewDelegate, UITableViewDataSource {
+extension ViewVendorViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0:
             return 1
         case 1:
-            return ds.produce.count
+            return ds.product.count
         default:
             return 0
         }
@@ -115,20 +115,23 @@ extension ViewVendorVC: UITableViewDelegate, UITableViewDataSource {
         return 2
     }
     
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let view = SectionTitleView.instanceFromNib() as? SectionTitleView
         switch section {
         case 0:
-            return ds.owner?.username
+            view?.titleLabel.text = ds.owner?.username
         case 1:
-            return "Products"
+            view?.titleLabel.text = "Products"
         default:
-            return ""
+            break
         }
+        return view
     }
     
-//    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-//        // Do something if there is time
-//    }
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 45
+        
+    }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let identifier = indexPath.section == 0
@@ -164,7 +167,7 @@ extension ViewVendorVC: UITableViewDelegate, UITableViewDataSource {
             }
 
         } else if let myCell = cell as? ProductInfoCell {
-            let product = ds.produce[indexPath.row]
+            let product = ds.product[indexPath.row]
             myCell.configCell(
                 title: product.prodName,
                 desc: product.prodDesc,
@@ -178,6 +181,10 @@ extension ViewVendorVC: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("kaka")
+        //Open product URL
+        let product = ds.product[indexPath.row]
+        
+        guard let prodURL = URL(string: product.prodLink) else { return }
+        UIApplication.shared.open(prodURL)
     }
 }

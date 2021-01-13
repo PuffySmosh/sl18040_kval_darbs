@@ -12,6 +12,8 @@ class CreateShopViewController: UIViewController {
 
     private let ref = Database.database().reference()
     let dbShops = "Shops"
+    let msgErrorFields = "Mandatory fields cannot be empty."
+    let msgErrorPrice = "The price has to be a positive whole number."
 
     @IBOutlet weak var usernameEditText: UITextField!
     @IBOutlet weak var vendorDescEditText: UITextView!
@@ -29,14 +31,12 @@ class CreateShopViewController: UIViewController {
     @IBOutlet weak var galleryLinkEditText: UITextField!
     
     @IBOutlet weak var errorLabel: UILabel!
-    
-    //next page = temp solution for this stuff
-    @IBOutlet weak var nextPageButton: UIButton!
-    
+        
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         let currentUID = Auth.auth().currentUser?.uid
+        errorLabel.text = ""
         
         if(currentUID != nil) {
             getExistingData()
@@ -90,33 +90,21 @@ class CreateShopViewController: UIViewController {
             let maxPrice = Int(maxPriceEditText.text ?? "0"),
             let socialLink1 = socialLinkEditText.text,
             let storeLink = storeLinkEditText.text
-            else { return }
+        else { errorLabel.text = msgErrorFields; return }
         
         let shop = ShopDC(username: username, vendorDesc: vendorDesc, promoCode: promoCodeEditText.text, minPrice: Int(minPrice), maxPrice: Int(maxPrice), internatShipping: internatShippingSwitch.isOn, socialLink1: socialLink1, socialLink2: otherSocialLinkEditText.text, storeLink: storeLink, galleryLink: galleryLinkEditText.text)
         
-//        let shop : [String : Any?] = [
-//            "username": usernameEditText.text,
-//            "vendorDesc": vendorDescEditText.text,
-//            "promoCode": promoCodeEditText.text,
-//            "minPrice": minPriceEditText.text,
-//            "maxPrice": maxPriceEditText.text,
-//            "internShipping": internatShippingSwitch.isOn,
-//            "socialLink1": socialLinkEditText.text,
-//            "socialLink2": otherSocialLinkEditText.text,
-//            "storeLink": storeLinkEditText.text,
-//            "galleryLink": galleryLinkEditText.text,
-////            "shopOwnerUID": Auth.auth().currentUser?.uid
-//        ]
         
-        if(shop.validate() == false) {
-            errorLabel.text = "yeet"
-        }
-        else {
+        if(shop.validateFields() == false) {
+            errorLabel.text = msgErrorFields
+        } else if (shop.validatePrice() == false) {
+            errorLabel.text = msgErrorPrice
+        } else {
             guard let shopOwnerUID = Auth.auth().currentUser?.uid else { return }
             ref.child(dbShops).child(shopOwnerUID).setValue(shop.passData())
         
-//            getExistingData()
-            self.nextPageButton.sendActions(for: .touchUpInside)
+            self.navigationController?.popViewController(animated: true)
+            self.dismiss(animated: true, completion: nil)
         }
     }
 }

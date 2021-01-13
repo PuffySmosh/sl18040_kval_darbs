@@ -16,7 +16,6 @@ struct VendorShow {
 }
 
 class VendorPageViewController: UIViewController {
-    
     private var ds = [VendorShow]()
     private var vendorID = ""
     
@@ -52,7 +51,7 @@ class VendorPageViewController: UIViewController {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        guard let destinationVC = segue.destination as? ViewVendorVC else {return}
+        guard let destinationVC = segue.destination as? ViewVendorViewController else {return}
         destinationVC.vendorID = vendorID
     }
 }
@@ -77,6 +76,6 @@ extension VendorPageViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         vendorID = ds[indexPath.row].shopId
-        performSegue(withIdentifier: "VendorShop", sender: nil)
+        performSegue(withIdentifier: "VendorListToShop", sender: nil)
     }
 }

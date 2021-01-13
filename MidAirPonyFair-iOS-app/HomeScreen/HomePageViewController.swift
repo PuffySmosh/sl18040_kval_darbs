@@ -19,6 +19,8 @@ class HomePageViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
+        self.navigationController?.navigationBar.shadowImage = UIImage()
         // Additional setup after loading the view.
         // Calling the funcionality of the closure, that was definded in sideListTableView.
         reloadList = { [weak self] in
@@ -32,6 +34,7 @@ class HomePageViewController: UIViewController {
         // Setting up the side menu to show up in the view.
         menu = SideMenuNavigationController(rootViewController: sideListTableView)
         menu?.leftSide = true
+        menu?.setNavigationBarHidden(true, animated: false)
         
         SideMenuManager.default.leftMenuNavigationController = menu
         SideMenuManager.default.addPanGestureToPresent(toView: self.view)
@@ -90,8 +93,10 @@ class SideMenuListController: UITableViewController {
     // When the view is loaded change, fills out the side menu.
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.separatorStyle = .none
+        tableView.register(SideMenuCell.instanceFromNib(),
+                           forCellReuseIdentifier: String(describing: SideMenuCell.self))
         
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         
         let currentUID = Auth.auth().currentUser?.uid
         loggedIn(currentUID: currentUID)
@@ -114,15 +119,21 @@ class SideMenuListController: UITableViewController {
     // Cell setup.
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: String(describing: SideMenuCell.self), for: indexPath)
         
-        cell.textLabel?.text = menuItems[indexPath.row].rawValue
+        if let cell = cell as? SideMenuCell {
+            cell.titleLabel.text = menuItems[indexPath.row].rawValue
+        }
         return cell
     }
     
     // If a side menu button was clicked, navigate to chosen view.
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         selectSegue?(menuItems[indexPath.row])
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 60
     }
     
     // Depending on whether the user is logged in, reload to the correct list of items.
@@ -142,5 +153,5 @@ enum MenuItems: String {
     case createEditShop = "Create/Edit Shop"
     
     case teamPage = "Meet the Team"
-    case vendorHall = "Vemdor Hall"
+    case vendorHall = "Vendor Hall"
 }
