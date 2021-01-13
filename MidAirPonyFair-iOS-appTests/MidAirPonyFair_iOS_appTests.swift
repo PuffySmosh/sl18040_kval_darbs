@@ -2,7 +2,7 @@
 //  MidAirPonyFair_iOS_appTests.swift
 //  MidAirPonyFair-iOS-appTests
 //
-//  Created by Irita Grigaluna on 13/12/2020.
+//  Created by Sabīne Liepiņa
 //
 
 import XCTest

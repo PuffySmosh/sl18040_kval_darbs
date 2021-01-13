@@ -2,7 +2,7 @@
 //  CreateProductViewController.swift
 //  MidAirPonyFair-iOS-app
 //
-//  Created by Irita Grigaluna on 03/01/2021.
+//  Created by Sabīne Liepiņa
 //
 
 import UIKit
@@ -10,6 +10,7 @@ import Firebase
 
 class CreateProductViewController: UIViewController {
     
+    // Initialising all the UI elements and constant variables
     @IBOutlet weak var ProductNameTextField: UITextField!
     @IBOutlet weak var ProductDescTextView: UITextView!
     @IBOutlet weak var ProductURLTextField: UITextField!
@@ -33,13 +34,15 @@ class CreateProductViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        // Configure UI stuff
         configUI()
-        
         ErrorLabel.text = ""
         
+        // If product exists, get existing data
         if(!productID.isEmpty) {
             getExistingData()
         } else {
+            // Else disable the delete button
             DeleteBarButton.isEnabled = false
             DeleteBarButton.tintColor = .clear
         }
@@ -51,12 +54,14 @@ class CreateProductViewController: UIViewController {
         clearFields()
     }
     
+    // Configures the look of text view UI element
     func configUI() {
         ProductDescTextView.layer.borderWidth = 1
-        ProductDescTextView.layer.borderColor = UIColor.lightGray.cgColor
+        ProductDescTextView.layer.borderColor = UIColor.systemGray5.cgColor
         ProductDescTextView.layer.cornerRadius = 5
     }
     
+    // Get database data of the product
     func getExistingData() {
         ref.child(dbProducts).child(productID).observe(.value, with:  { (snapshot) in
             let existingProd = snapshot.value as? [String: Any?]
@@ -87,6 +92,7 @@ class CreateProductViewController: UIViewController {
         }
     }
     
+    // If delete button is pressed, delete object in DB and close the window
     @IBAction func deletePressed(_ sender: UIBarButtonItem) {
         ref.child(dbProducts).child(productID).removeValue()
         
@@ -95,6 +101,7 @@ class CreateProductViewController: UIViewController {
 
     }
     
+    // Clears fields
     func clearFields () {
         ProductNameTextField.text = ""
         ProductDescTextView.text = ""
@@ -105,6 +112,7 @@ class CreateProductViewController: UIViewController {
         ProductCustomisabilitySwitch.isOn = false
     }
     
+    // If submit button is pressed
     @IBAction func SubmitButtonPressed(_ sender: Any) {
         
         guard
@@ -117,20 +125,24 @@ class CreateProductViewController: UIViewController {
             let shopOwnerUID = Auth.auth().currentUser?.uid
         else { ErrorLabel.text = msgErrorFields; return }
         
+        // Creates product object
         let product = ProductDC(prodName: prodName, prodDesc: prodDesc, prodLink: prodLink, multiColour: ProductColorVariantSwitch.isOn, multiSize: ProductSizeVariantSwitch.isOn, customisable: ProductCustomisabilitySwitch.isOn, basePrice: basePrice, shopOwnerUID: shopOwnerUID)
         
+        // Checks for errors
         if(product.validateFields() == false) {
             ErrorLabel.text = msgErrorFields
         } else if(product.validatePrice() == false) {
             ErrorLabel.text = msgErrorPrice
         } else {
+            // If no errors, check if product already exists and saves the object in the DB
             if(productID.isEmpty) {
                 ref.child(dbProducts).childByAutoId().setValue(product.passData())
             }
             else {
                 ref.child(dbProducts).child(productID).setValue(product.passData())
             }
-                        
+            
+            // Close this screen
             self.navigationController?.popViewController(animated: true)
             self.dismiss(animated: true, completion: nil)
             

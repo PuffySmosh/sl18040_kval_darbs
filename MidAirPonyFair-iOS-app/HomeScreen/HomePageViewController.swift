@@ -19,19 +19,23 @@ class HomePageViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // Initialises/creates the side menu
         self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         self.navigationController?.navigationBar.shadowImage = UIImage()
+        
         // Additional setup after loading the view.
         // Calling the funcionality of the closure, that was definded in sideListTableView.
         reloadList = { [weak self] in
             self?.sideListTableView.reloadList()
         }
         
+        // selectSegue closure functionality - calls the function
         sideListTableView.selectSegue = { [weak self] givenMenuItem in
             self?.selectSegue(menuItem: givenMenuItem)
         }
         
-        // Setting up the side menu to show up in the view.
+        // Setting up the side menu to show up in the view properly
         menu = SideMenuNavigationController(rootViewController: sideListTableView)
         menu?.leftSide = true
         menu?.setNavigationBarHidden(true, animated: false)
@@ -93,11 +97,12 @@ class SideMenuListController: UITableViewController {
     // When the view is loaded change, fills out the side menu.
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         tableView.separatorStyle = .none
         tableView.register(SideMenuCell.instanceFromNib(),
                            forCellReuseIdentifier: String(describing: SideMenuCell.self))
         
-        
+        // Checks if there is a current logged in user
         let currentUID = Auth.auth().currentUser?.uid
         loggedIn(currentUID: currentUID)
     }
@@ -112,6 +117,7 @@ class SideMenuListController: UITableViewController {
         }
     }
     
+    // How many items we have in the view
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return menuItems.count
     }
@@ -132,6 +138,7 @@ class SideMenuListController: UITableViewController {
         selectSegue?(menuItems[indexPath.row])
     }
     
+    // Height setup for rows
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 60
     }

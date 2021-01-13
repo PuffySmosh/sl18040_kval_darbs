@@ -2,39 +2,44 @@
 //  ProductInfoCell.swift
 //  MidAirPonyFair-iOS-app
 //
-//  Created by Irita Grigaluna on 11/01/2021.
+//  Created by Sabīne Liepiņa
 //
 
 import UIKit
 
 class ProductInfoCell: UITableViewCell {
+    // Ref UI elements
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var descLabel: UILabel!
     @IBOutlet weak var pricelabel: UILabel!
-    @IBOutlet weak var stuffLabel: UILabel!
+    @IBOutlet weak var customisableLabel: UILabel!
     
+    // Fill out cell with data from DB
     func configCell(title: String, desc: String, price: Int, custom: Bool, size: Bool, color: Bool) {
         titleLabel.text = title
         descLabel.text = desc
         pricelabel.text = "$\(price)"
-        var stuffText = ""
+        var customisableText = ""
+        
+        // If option is true -> title 1, else -> title 2
+        // Fills out the same label
         if color {
-            stuffText.append("Multiple colors available \n")
+            customisableText.append("Multiple colors available \n")
         } else {
-            stuffText.append("One color only \n")
+            customisableText.append("One color only \n")
         }
         
         if size {
-            stuffText.append("Multiple sizes available \n")
+            customisableText.append("Multiple sizes available \n")
         } else {
-            stuffText.append("One size only \n")
+            customisableText.append("One size only \n")
         }
         
         if custom {
-            stuffText.append("Personalisable")
+            customisableText.append("Personalisable")
         } else {
-            stuffText.append("Non-personalisable")
+            customisableText.append("Non-personalisable")
         }
-        stuffLabel.text = stuffText
+        customisableLabel.text = customisableText
     }
 }

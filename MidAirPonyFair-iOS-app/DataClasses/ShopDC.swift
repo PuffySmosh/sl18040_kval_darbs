@@ -2,11 +2,12 @@
 //  ShopDC.swift
 //  MidAirPonyFair-iOS-app
 //
-//  Created by Irita Grigaluna on 02/01/2021.
+//  Created by Sabīne Liepiņa
 //
 
 import Foundation
 
+// Object for storing shop/vendor information from firebase.
 struct ShopDC {
     var username: String
     var vendorDesc: String
@@ -32,20 +33,28 @@ struct ShopDC {
         self.galleryLink = galleryLink
     }
     
+    // Validates if fields are blank
     func validateFields () -> Bool {
-        let isDesc500 = vendorDesc.count <= 500
+        // Validates the length of the description
+        // TODO: Move this to a seperate function
+//        let isDesc500 = vendorDesc.count <= 500
         
-        return !username.isEmpty && !vendorDesc.isEmpty && !socialLink1.isEmpty && !storeLink.isEmpty && isDesc500
+        return !username.isEmpty && !vendorDesc.isEmpty && !socialLink1.isEmpty && !storeLink.isEmpty
     }
     
+    // Validates that the price is not below 0 and not larger than maxPrice
     func validatePrice () -> Bool {
+        // Check that price can't be below 0
         let isMinIntOk = minPrice > 0
         let isMaxIntOk = maxPrice > 0
+        
+        // Check that minPrice is not larger than maxPrice
         let isMinOk = minPrice <= maxPrice
         
         return isMinIntOk && isMaxIntOk && isMinOk
     }
     
+    // Takes the object and makes it into a dictionary to be passed to DB
     func passData() -> [String: Any?] {
             return [
                 "username": username,

@@ -2,14 +2,14 @@
 //  CreateShopViewController.swift
 //  MidAirPonyFair-iOS-app
 //
-//  Created by Irita Grigaluna on 30/12/2020.
+//  Created by Sabīne Liepiņa
 //
 
 import UIKit
 import Firebase
 
 class CreateShopViewController: UIViewController {
-
+    // Initialising all the UI elements and constant variables
     private let ref = Database.database().reference()
     let dbShops = "Shops"
     let msgErrorFields = "Mandatory fields cannot be empty."
@@ -37,6 +37,7 @@ class CreateShopViewController: UIViewController {
         // Do any additional setup after loading the view.
         let currentUID = Auth.auth().currentUser?.uid
         errorLabel.text = ""
+        configUI()
         
         if(currentUID != nil) {
             getExistingData()
@@ -44,6 +45,20 @@ class CreateShopViewController: UIViewController {
         
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(true)
+        // Clears fields when closing the screen
+        clearFields()
+    }
+    
+    // Configures the look of text view UI element
+    func configUI() {
+        vendorDescEditText.layer.borderWidth = 1
+        vendorDescEditText.layer.borderColor = UIColor.systemGray5.cgColor
+        vendorDescEditText.layer.cornerRadius = 5
+    }
+    
+    // Get database data of the shop
     func getExistingData() {
         guard let shopOwnerUID = Auth.auth().currentUser?.uid else { return }
         
@@ -64,6 +79,7 @@ class CreateShopViewController: UIViewController {
             let socialLink2 = existingShop?["socialLink2"] as? String ?? ""
             let galleryLink = existingShop?["galleryLink"] as? String ?? ""
             
+            // Fills out the fields with the gotten data
             self.usernameEditText.text = "\(username)"
             self.vendorDescEditText.text = "\(vendorDesc)"
             self.promoCodeEditText.text = "\(promoCode)"
@@ -80,7 +96,21 @@ class CreateShopViewController: UIViewController {
         }
     }
     
+    // Clears fields
+    func clearFields () {
+        usernameEditText.text = ""
+        vendorDescEditText.text = ""
+        promoCodeEditText.text = ""
+        minPriceEditText.text = ""
+        maxPriceEditText.text = ""
+        internatShippingSwitch.isOn = false
+        socialLinkEditText.text = ""
+        otherSocialLinkEditText.text = ""
+        storeLinkEditText.text = ""
+        galleryLinkEditText.text = ""
+    }
     
+    // When submit button is pressed - give error or save data in DB
     @IBAction func submitButtonPressed(_ sender: UIButton) {
        
         guard
@@ -92,14 +122,16 @@ class CreateShopViewController: UIViewController {
             let storeLink = storeLinkEditText.text
         else { errorLabel.text = msgErrorFields; return }
         
+        // Creates a shop object
         let shop = ShopDC(username: username, vendorDesc: vendorDesc, promoCode: promoCodeEditText.text, minPrice: Int(minPrice), maxPrice: Int(maxPrice), internatShipping: internatShippingSwitch.isOn, socialLink1: socialLink1, socialLink2: otherSocialLinkEditText.text, storeLink: storeLink, galleryLink: galleryLinkEditText.text)
         
-        
+        // Checks for any errors
         if(shop.validateFields() == false) {
             errorLabel.text = msgErrorFields
         } else if (shop.validatePrice() == false) {
             errorLabel.text = msgErrorPrice
         } else {
+            // If no errors, save the shop object in the DB and close this screen
             guard let shopOwnerUID = Auth.auth().currentUser?.uid else { return }
             ref.child(dbShops).child(shopOwnerUID).setValue(shop.passData())
         

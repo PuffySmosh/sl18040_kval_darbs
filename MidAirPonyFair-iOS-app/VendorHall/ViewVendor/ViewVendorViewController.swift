@@ -2,18 +2,20 @@
 //  ViewVendorViewController.swift
 //  MidAirPonyFair-iOS-app
 //
-//  Created by Irita Grigaluna on 11/01/2021.
+//  Created by Sabīne Liepiņa
 //
 
 import UIKit
 import Firebase
 
+// Object for storing the information
 struct VendorInfo {
     var owner: ShopDC?
     var product: [ProductDC]
 }
 
 class ViewVendorViewController: UIViewController {
+    // Initialising all the UI elements and constant variables
     @IBOutlet weak var tableView: UITableView!
     
     var vendorID = ""
@@ -27,11 +29,13 @@ class ViewVendorViewController: UIViewController {
         getData()
     }
     
+    // Get database data of the shop and products
     func getData() {
         let ref = Database.database().reference()
         let shopsRef = ref.child("Shops").child(vendorID)
         let productRef = ref.child("Products")
         
+        // Get the selected shop data
         shopsRef.observeSingleEvent(of: .value, with: { [weak self] (snapshot) in
 
             guard
@@ -63,6 +67,7 @@ class ViewVendorViewController: UIViewController {
             
             self?.ds.owner = vendor
             
+            // Get product data that belongs to the shop owner
             productRef.observeSingleEvent(of: .value, with: { (snapshot) in
                 guard let value = snapshot.value as? [String: Any] else { return }
                 for (key, products) in value {
@@ -99,7 +104,9 @@ class ViewVendorViewController: UIViewController {
     }
 }
 
+// Table view setup
 extension ViewVendorViewController: UITableViewDelegate, UITableViewDataSource {
+    // Dividing table view into 2 sections with different cell counts
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0:
@@ -115,6 +122,7 @@ extension ViewVendorViewController: UITableViewDelegate, UITableViewDataSource {
         return 2
     }
     
+    // Header label text configuration
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let view = SectionTitleView.instanceFromNib() as? SectionTitleView
         switch section {
@@ -128,18 +136,22 @@ extension ViewVendorViewController: UITableViewDelegate, UITableViewDataSource {
         return view
     }
     
+    // Height of the header
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 45
         
     }
     
+    // Cell setup
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        // Depending on the section, have specific cell type
         let identifier = indexPath.section == 0
             ? String(describing: VendorInfoCell.self)
             : String(describing: ProductInfoCell.self)
         
         let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath)
         
+        // Config of Vendor cell
         if let myCell = cell as? VendorInfoCell {
             guard let owner = ds.owner else { return cell }
             
@@ -155,18 +167,21 @@ extension ViewVendorViewController: UITableViewDelegate, UITableViewDataSource {
                 shipping: owner.internatShipping,
                 discountCode: owner.promoCode)
             
+            // If no link can be opened show alert
             myCell.showAlert = { [weak self] in
                 let alert = UIAlertController(title: "Oops", message: "There is no link for this", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
                 self?.present(alert, animated: true, completion: nil)
             }
             
+            // If link button pressed, open link in browser
             myCell.openLink = { (linkString) in
                 guard let url = URL(string: linkString) else { return }
                 UIApplication.shared.open(url)
             }
 
         } else if let myCell = cell as? ProductInfoCell {
+            // Config product cell
             let product = ds.product[indexPath.row]
             myCell.configCell(
                 title: product.prodName,
@@ -180,6 +195,7 @@ extension ViewVendorViewController: UITableViewDelegate, UITableViewDataSource {
         return cell
     }
     
+    // If a product is selected open its URL in browser
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         //Open product URL
         let product = ds.product[indexPath.row]
